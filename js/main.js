@@ -3,6 +3,27 @@
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  const header = document.getElementById("header");
+
+  function getScrollOffset() {
+    if (header) return header.offsetHeight;
+    return 80;
+  }
+
+  function getSectionScrollTop(section) {
+    if (!section) return 0;
+    if (section.id === "hero") return 0;
+    return section.offsetTop;
+  }
+
+  function scrollToSection(target, immediate = false) {
+    const top = getSectionScrollTop(target);
+    window.scrollTo({
+      top,
+      behavior: immediate || prefersReducedMotion ? "auto" : "smooth",
+    });
+  }
+
   // Year in footer
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -21,30 +42,13 @@
   window.addEventListener("load", () => setTimeout(hideLoader, loaderDuration));
   setTimeout(hideLoader, loaderDuration + 800);
 
-  // Lenis smooth scroll
-  let lenis = null;
-  if (!prefersReducedMotion && typeof Lenis !== "undefined") {
-    lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-  }
-
   // Header scroll state
-  const header = document.getElementById("header");
-  const onScroll = () => {
+  const updateHeaderState = () => {
     if (!header) return;
     header.classList.toggle("is-scrolled", window.scrollY > 40);
   };
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
+  window.addEventListener("scroll", updateHeaderState, { passive: true });
+  updateHeaderState();
 
   // Mobile nav
   const navToggle = document.getElementById("nav-toggle");
@@ -68,30 +72,61 @@
     });
   }
 
-  // Smooth anchor scroll with Lenis
+  // Active nav
+  const sections = Array.from(document.querySelectorAll("main > section[id]"));
+  const navLinks = document.querySelectorAll(
+    ".header__link[href^='#'], .header__mobile a[href^='#']"
+  );
+  let activeSectionId = "";
+
+  function updateActiveNav() {
+    if (!sections.length || !navLinks.length) return;
+
+    const viewportMid = window.innerHeight * 0.45;
+    let current = sections[0]?.id || "";
+
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= viewportMid && rect.bottom > viewportMid) {
+        current = section.id;
+      }
+    });
+
+    if (current === activeSectionId) return;
+    activeSectionId = current;
+
+    navLinks.forEach((link) => {
+      link.classList.toggle("is-active", link.getAttribute("href") === `#${current}`);
+    });
+  }
+
+  window.addEventListener("scroll", updateActiveNav, { passive: true });
+  updateActiveNav();
+
+  // Nav links — snap to full-viewport sections
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener("click", (e) => {
       const id = anchor.getAttribute("href");
       if (!id || id === "#") return;
       const target = document.querySelector(id);
-      if (!target) return;
+      if (!target || !target.matches("section[id]")) return;
       e.preventDefault();
       closeMobileNav();
-      if (lenis) {
-        lenis.scrollTo(target, { offset: -80 });
-      } else {
-        target.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
-      }
+
+      scrollToSection(target, prefersReducedMotion);
+
+      activeSectionId = target.id;
+      navLinks.forEach((link) => {
+        link.classList.toggle("is-active", link.getAttribute("href") === id);
+      });
     });
   });
 
   // Back to top
   const backToTop = document.getElementById("back-to-top");
-  if (backToTop) {
-    backToTop.addEventListener("click", () => {
-      if (lenis) lenis.scrollTo(0);
-      else window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
-    });
+  const hero = document.getElementById("hero");
+  if (backToTop && hero) {
+    backToTop.addEventListener("click", () => scrollToSection(hero, prefersReducedMotion));
   }
 
   // Reveal on scroll
@@ -145,28 +180,9 @@
     });
   });
 
-  // Auto-load embeds when scrolled into view (optional enhancement)
-  const embedFrames = document.querySelectorAll(".embed-chrome__frame[data-embed-src]");
-  if (embedFrames.length && !prefersReducedMotion) {
-    const embedObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Only auto-load if user hasn't interacted — keep click-to-load as primary
-            // Uncomment below for auto-load on scroll:
-            // loadEmbed(entry.target);
-          }
-        });
-      },
-      { threshold: 0.25 }
-    );
-    embedFrames.forEach((frame) => embedObserver.observe(frame));
-  }
-
   // Subtle parallax on brand background
   if (!prefersReducedMotion) {
     const artboard = document.querySelector(".brand-bg__artboard");
-    const wave = document.querySelector(".brand-bg__wave");
     let ticking = false;
 
     window.addEventListener(
@@ -177,36 +193,12 @@
         requestAnimationFrame(() => {
           const y = window.scrollY;
           if (artboard) {
-            artboard.style.transform = `translateY(${y * 0.08}px)`;
-          }
-          if (wave) {
-            wave.style.transform = `translateX(10%) translateY(${y * 0.04}px)`;
+            artboard.style.transform = `translateY(${y * 0.06}px)`;
           }
           ticking = false;
         });
       },
       { passive: true }
     );
-  }
-
-  // Active nav link (optional subtle highlight)
-  const sections = document.querySelectorAll("section[id]");
-  const navLinks = document.querySelectorAll(".header__link[href^='#']");
-
-  if (sections.length && navLinks.length) {
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.getAttribute("id");
-            navLinks.forEach((link) => {
-              link.classList.toggle("is-active", link.getAttribute("href") === `#${id}`);
-            });
-          }
-        });
-      },
-      { threshold: 0.35, rootMargin: "-80px 0px -50% 0px" }
-    );
-    sections.forEach((s) => sectionObserver.observe(s));
   }
 })();

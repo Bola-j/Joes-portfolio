@@ -10,21 +10,10 @@ html {
   scroll-behavior: smooth;
 }
 
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
 }
 
 body {
@@ -165,10 +154,33 @@ h4 {
   max-width: var(--container-narrow);
 }
 
-/* Section spacing */
+/* Full-viewport sections — one section per screen when navigating */
+main > section[id] {
+  position: relative;
+  box-sizing: border-box;
+  min-height: var(--section-viewport);
+  height: var(--section-viewport);
+  max-height: var(--section-viewport);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  scroll-margin-top: 0;
+  padding-top: calc(var(--header-height) + var(--space-md));
+  padding-bottom: var(--section-padding-bottom);
+  -webkit-overflow-scrolling: touch;
+}
+
 .section {
   position: relative;
-  padding-block: clamp(4rem, 12vh, var(--space-3xl));
+}
+
+.hero.section {
+  overflow: hidden;
+  padding-top: var(--header-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .section__header {
@@ -200,6 +212,22 @@ h4 {
 .reveal-delay-4 { transition-delay: 0.4s; }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: none;
+  }
+
+  main > section[id] {
+    height: auto;
+    max-height: none;
+    min-height: auto;
+    overflow: visible;
+    scroll-snap-align: none;
+  }
+
+  .hero.section {
+    min-height: 100dvh;
+  }
+
   .reveal {
     opacity: 1;
     transform: none;

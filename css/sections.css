@@ -1,11 +1,9 @@
 /* Hero */
 .hero {
-  min-height: 100vh;
-  min-height: 100dvh;
   display: flex;
   align-items: center;
-  padding-top: var(--header-height);
-  padding-bottom: var(--space-xl);
+  flex: 1;
+  width: 100%;
 }
 
 .hero__inner {
@@ -120,9 +118,9 @@
 
 .hero__scroll {
   position: absolute;
-  bottom: var(--space-lg);
+  bottom: var(--space-md);
   left: clamp(1.25rem, 5vw, 3rem);
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
@@ -193,9 +191,18 @@
   }
 }
 
+section {
+  -ms-overflow-style: none;  /* Hides scrollbar for IE and Edge */
+  scrollbar-width: none;     /* Hides scrollbar for Firefox, Chrome 121+, and Safari 18.2+ */
+}
+section::-webkit-scrollbar {
+  display: none;
+  }
+
 .section__desc {
   max-width: 36rem;
   margin-top: var(--space-sm);
+  overflow: hidden;
 }
 
 .section__header--center {
@@ -213,9 +220,9 @@
 
 .project {
   display: grid;
-  gap: var(--space-xl);
-  margin-bottom: clamp(4rem, 10vh, var(--space-3xl));
-  padding-bottom: clamp(4rem, 10vh, var(--space-3xl));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-xl);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -361,4 +368,18 @@
   .brand-bg__artboard {
     transition: transform 0.1s linear;
   }
+}
+
+
+#expertise,
+#work {
+  justify-content: flex-start;
+}
+
+#about,
+#philosophy,
+#contact {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }

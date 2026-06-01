@@ -343,10 +343,20 @@
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--color-border);
   padding: var(--space-lg);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.35s var(--ease-luxury), transform 0.35s var(--ease-luxury);
+  pointer-events: none;
 }
 
 .header__mobile:not([hidden]) {
   display: block;
+}
+
+.header__mobile.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .header__mobile ul {
@@ -574,4 +584,10 @@
 .footer__top:hover {
   background: var(--color-accent-soft);
   transform: translateY(-3px);
+}
+
+@media (min-width: 1024px) {
+  .footer {
+    scroll-snap-align: end;
+  }
 }

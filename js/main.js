@@ -57,14 +57,30 @@
   const closeMobileNav = () => {
     if (!navToggle || !mobileNav) return;
     navToggle.setAttribute("aria-expanded", "false");
-    mobileNav.hidden = true;
+    mobileNav.classList.remove("is-open");
+    setTimeout(() => {
+      if (navToggle.getAttribute("aria-expanded") === "false") {
+        mobileNav.hidden = true;
+      }
+    }, 350);
   };
 
   if (navToggle && mobileNav) {
     navToggle.addEventListener("click", () => {
       const expanded = navToggle.getAttribute("aria-expanded") === "true";
       navToggle.setAttribute("aria-expanded", String(!expanded));
-      mobileNav.hidden = expanded;
+      if (expanded) {
+        mobileNav.classList.remove("is-open");
+        setTimeout(() => {
+          if (navToggle.getAttribute("aria-expanded") === "false") {
+            mobileNav.hidden = true;
+          }
+        }, 350);
+      } else {
+        mobileNav.hidden = false;
+        void mobileNav.offsetHeight; // force reflow
+        mobileNav.classList.add("is-open");
+      }
     });
 
     mobileNav.querySelectorAll("a").forEach((link) => {

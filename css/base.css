@@ -10,12 +10,6 @@ html {
   scroll-behavior: smooth;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-snap-type: y mandatory;
-  }
-}
-
 body {
   font-family: var(--font-body);
   font-size: 1rem;
@@ -154,21 +148,16 @@ h4 {
   max-width: var(--container-narrow);
 }
 
-/* Full-viewport sections — one section per screen when navigating */
+/* Base section styles (Mobile first) */
 main > section[id] {
   position: relative;
   box-sizing: border-box;
-  min-height: var(--section-viewport);
-  height: var(--section-viewport);
-  max-height: var(--section-viewport);
-  overflow-x: hidden;
-  overflow-y: auto;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  scroll-margin-top: 0;
-  padding-top: calc(var(--header-height) + var(--space-md));
+  min-height: auto;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  padding-top: calc(var(--header-height) + var(--space-lg));
   padding-bottom: var(--section-padding-bottom);
-  -webkit-overflow-scrolling: touch;
 }
 
 .section {
@@ -231,5 +220,27 @@ main > section[id] {
   .reveal {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Scroll Snapping and Viewport Sections for Desktop Screens */
+@media (min-width: 1024px) {
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-snap-type: y mandatory;
+    }
+  }
+
+  main > section[id] {
+    min-height: var(--section-viewport);
+    height: var(--section-viewport);
+    max-height: var(--section-viewport);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    scroll-margin-top: 0;
+    padding-top: calc(var(--header-height) + var(--space-md));
+    -webkit-overflow-scrolling: touch;
   }
 }

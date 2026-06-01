@@ -1,0 +1,44 @@
+:root {
+  /* Brand colors */
+  --color-bg: #1e1e1e;
+  --color-bg-elevated: #252525;
+  --color-bg-card: #2a2a2a;
+  --color-accent: #d4af37;
+  --color-accent-soft: rgba(212, 175, 55, 0.15);
+  --color-accent-glow: rgba(212, 175, 55, 0.35);
+  --color-text: #f5f5f0;
+  --color-text-muted: #9a9a9a;
+  --color-border: rgba(212, 175, 55, 0.25);
+  --color-border-strong: rgba(212, 175, 55, 0.5);
+
+  /* Typography */
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Outfit", system-ui, sans-serif;
+  --tracking-label: 0.28em;
+  --tracking-wide: 0.12em;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 8rem;
+
+  /* Layout */
+  --container-max: 1280px;
+  --container-narrow: 720px;
+  --header-height: 5rem;
+
+  /* Motion */
+  --ease-luxury: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 0.35s;
+  --duration-medium: 0.6s;
+  --duration-slow: 0.9s;
+
+  /* Effects */
+  --shadow-gold: 0 0 40px rgba(212, 175, 55, 0.12);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+}

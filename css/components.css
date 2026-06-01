@@ -473,7 +473,7 @@
 .embed-chrome__frame {
   position: relative;
   aspect-ratio: 16 / 10;
-  min-height: 320px;
+  min-height: auto;
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -482,6 +482,12 @@
   align-items: center;
   justify-content: center;
   transition: transform var(--duration-medium) var(--ease-luxury);
+}
+
+@media (min-width: 768px) {
+  .embed-chrome__frame {
+    min-height: 320px;
+  }
 }
 
 .embed-chrome:hover .embed-chrome__frame {
